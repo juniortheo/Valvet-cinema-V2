@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tickets — Velvet Cinema</title>
+<meta name="description" content="Reserve tickets to a Velvet Cinema screening in Kigali. Pay with MTN Mobile Money." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/styles.css" />
+<link rel="stylesheet" href="css/pages.css" />
+</head>
+<body data-page="tickets">
+<div id="site-header"></div>
+
+<div class="masthead">
+  <div class="wrap">
+    <span class="lbl">Tickets</span>
+    <h1 class="d1">Hold Your Seat</h1>
+    <p class="lede dim">Choose a screening, pay on Mobile Money, and your seat is held the moment payment clears. You'll get an SMS to show at the door.</p>
+  </div>
+</div>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="ed2" style="gap:56px;">
+
+      <!-- FORM -->
+      <form class="form-panel" id="ticket-form">
+        <span class="lbl grey" style="display:block;margin-bottom:22px;">Reserve</span>
+
+        <div class="fld">
+          <label for="tk-event">Screening</label>
+          <select id="tk-event">
+            <option data-price="8000">Under the Stars: African Shorts — 12 Jul — RWF 8,000</option>
+            <option data-price="7000">Midnight Reel — 26 Jul — RWF 7,000</option>
+            <option data-price="9000">New Rwandan Cinema — 09 Aug — RWF 9,000</option>
+            <option data-price="12000">Garden Double Bill — 23 Aug — RWF 12,000</option>
+            <option data-price="8000">Documentary Night — 13 Sep — RWF 8,000</option>
+          </select>
+        </div>
+
+        <div class="fld-row">
+          <div class="fld">
+            <label for="tk-name">Full name</label>
+            <input id="tk-name" type="text" placeholder="Your name" />
+          </div>
+          <div class="fld">
+            <label for="tk-phone">MTN number</label>
+            <input id="tk-phone" type="tel" placeholder="078 000 0000" />
+          </div>
+        </div>
+
+        <div class="fld-row">
+          <div class="fld">
+            <label for="tk-qty">Tickets</label>
+            <input id="tk-qty" type="number" min="1" max="10" value="1" />
+          </div>
+          <div class="fld">
+            <label for="tk-email">Email (optional)</label>
+            <input id="tk-email" type="email" placeholder="you@email.com" />
+          </div>
+        </div>
+
+        <div class="total-row">
+          <span class="lbl">Total</span>
+          <span class="amt js-tk-total">RWF 8,000</span>
+        </div>
+
+        <button class="btn btn-block js-tk-pay">Pay with Mobile Money</button>
+
+        <div class="momo">
+          <span class="lbl">Confirm on your phone</span>
+          <p class="dim" style="font-size:16px;">Dial the code below, or approve the prompt sent to your MTN line.</p>
+          <div class="momo-code">*182*8*1*VELVET#</div>
+          <p class="dim" style="font-size:16px;">Amount: <span class="js-momo-amt">RWF 8,000</span></p>
+          <p class="dim" style="font-size:15px;margin-top:12px;">Once it clears you'll receive an SMS confirmation. Show it at the door — no printed ticket needed.</p>
+        </div>
+      </form>
+
+      <!-- SIDE -->
+      <div class="ed-side">
+        <div>
+          <span class="lbl grey" style="display:block;margin-bottom:14px;">Good to know</span>
+          <h2 class="d3" style="margin-bottom:20px;">Before you book</h2>
+        </div>
+
+        <div class="included" style="grid-template-columns:1fr;gap:0;">
+          <div class="item">
+            <span class="lbl">Seats</span>
+            <h4>Limited by the room</h4>
+            <p class="dim">Each venue holds what it holds — usually 80 to 200. When a night sells out we don't add a second screening.</p>
+          </div>
+          <div class="item" style="margin-top:22px;">
+            <span class="lbl">Arrival</span>
+            <h4>Come early</h4>
+            <p class="dim">Doors open ninety minutes before projection. The opening set and the bar are part of the ticket, not an add-on.</p>
+          </div>
+          <div class="item" style="margin-top:22px;">
+            <span class="lbl">Venue</span>
+            <h4>Sent the day before</h4>
+            <p class="dim">Exact locations go out by SMS 24 hours ahead. Velvet has no permanent address by design.</p>
+          </div>
+          <div class="item" style="margin-top:22px;">
+            <span class="lbl">Refunds</span>
+            <h4>Transferable</h4>
+            <p class="dim">Can't make it? Reply to your confirmation SMS and we'll move your seat to someone else's name, up to 24 hours before.</p>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid var(--rule-light);padding-top:22px;margin-top:8px;">
+          <span class="lbl grey" style="display:block;margin-bottom:10px;">Groups &amp; private nights</span>
+          <p class="dim" style="font-size:17px;margin-bottom:16px;">Booking for eight or more, or want a screening of your own? We'll build it with you.</p>
+          <a href="about.html#contact" class="cta">Talk to us <span class="arw">→</span></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-rule band-warm">
+  <div class="wrap">
+    <div class="sec-hd"><h2 class="d2">Also On Sale</h2><a href="upcoming.html" class="link-u">All screenings</a></div>
+    <div class="srow">
+      <div class="srow-date"><span class="dd">26</span><span class="mm lbl-sm">July</span></div>
+      <div><h3>Midnight Reel</h3><p class="sub">A late cult classic in a hidden room · vinyl set · cocktails.</p></div>
+      <div class="srow-where"><span class="lbl lbl-sm">Venue</span><span class="sub">Nyamirambo · 8:00 PM</span></div>
+      <div class="srow-act"><span class="price">RWF 7,000</span><a href="#ticket-form" class="cta">Select <span class="arw">→</span></a></div>
+    </div>
+    <div class="srow">
+      <div class="srow-date"><span class="dd">09</span><span class="mm lbl-sm">Aug</span></div>
+      <div><h3>New Rwandan Cinema</h3><p class="sub">New work by Rwandan filmmakers · director Q&amp;A.</p></div>
+      <div class="srow-where"><span class="lbl lbl-sm">Venue</span><span class="sub">Kacyiru · 6:00 PM</span></div>
+      <div class="srow-act"><span class="price">RWF 9,000</span><a href="#ticket-form" class="cta">Select <span class="arw">→</span></a></div>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>About Us — Velvet Cinema</title>
+<meta name="description" content="The story behind Velvet Cinema, Kigali's independent pop-up cinema — and how to reach us." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="css/styles.css" />
+<link rel="stylesheet" href="css/pages.css" />
+</head>
+<body data-page="about">
+<div id="site-header"></div>
+
+<div class="masthead">
+  <div class="wrap">
+    <span class="lbl">Our Mission</span>
+    <h1 class="d1">A Cinema With <span class="it">No Fixed Address</span></h1>
+    <p class="lede dim">Velvet Cinema is an independent pop-up cinema in Kigali. We curate film screenings paired with music, drinks and bites — a whole evening, not just a movie.</p>
+  </div>
+</div>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="frame ratio-wide rv" style="margin-bottom:56px;">
+      <div class="frame-fb">assets/images/about-hero.jpg</div>
+      <img src="assets/images/about-hero.jpg" alt="" onerror="this.remove()" />
+    </div>
+
+    <div class="ed2">
+      <div>
+        <span class="lbl grey" style="display:block;margin-bottom:16px;">Why we do this</span>
+        <p class="quote">Kigali has stories to watch and people who love to gather. We just put the two in the same room.</p>
+      </div>
+      <div class="prose dim">
+        <p>Velvet started because great films deserve a great room, and because a film watched alone on a laptop is a different thing entirely from a film watched with two hundred strangers on a rooftop.</p>
+        <p>We have no permanent venue. Instead we borrow rooftops, gardens, courtyards and warehouses across the city, and turn each one into a cinema for a single night. The room is chosen for the film, never the other way round.</p>
+        <p>Every screening is curated end to end — the film, the opening set, the drinks, the bites, the light. Nothing is off the shelf. We keep the runs small so that each night belongs to the people who are in it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-rule band-warm">
+  <div class="wrap">
+    <div class="sec-hd"><h2 class="d2 it">What a Night Looks Like</h2></div>
+    <div class="included">
+      <div class="item rv">
+        <span class="lbl">From 6:30</span>
+        <h4>Doors &amp; sound</h4>
+        <p class="dim">Arrive early, find your spot, get a drink. A live set or vinyl plays while the light drains out of the sky.</p>
+      </div>
+      <div class="item rv">
+        <span class="lbl">At dusk</span>
+        <h4>The film</h4>
+        <p class="dim">A short introduction, then the projector. One film, one time, no interruptions, in a room you would not expect.</p>
+      </div>
+      <div class="item rv">
+        <span class="lbl">After</span>
+        <h4>The conversation</h4>
+        <p class="dim">The music comes back on and the bar stays open. Most people leave much later than they planned to.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec-rule">
+  <div class="wrap">
+    <div class="stat-row">
+      <div class="stat rv"><span class="n">2024</span><span class="lbl">First screening</span></div>
+      <div class="stat rv"><span class="n">11</span><span class="lbl">Films projected</span></div>
+      <div class="stat rv"><span class="n">1,400+</span><span class="lbl">Seats filled</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sec sec-rule" id="contact">
+  <div class="wrap">
+    <div class="ed2" style="gap:56px;">
+      <div>
+        <span class="lbl grey" style="display:block;margin-bottom:16px;">Contact Us</span>
+        <h2 class="d2" style="margin-bottom:22px;">Bookings, press &amp; partnerships</h2>
+        <p class="prose dim" style="margin-bottom:34px;">Private screenings, brand nights, venue offers, programming suggestions, or just a hello — write to us and we'll come back to you.</p>
+
+        <div class="film-facts" style="grid-template-columns:1fr;gap:20px;">
+          <div><span class="lbl">Email</span><span class="v">hello@velvetcinema.rw</span></div>
+          <div><span class="lbl">Phone / WhatsApp</span><span class="v">+250 78 000 0000</span></div>
+          <div><span class="lbl">Instagram</span><span class="v">@velvetcinema</span></div>
+          <div><span class="lbl">Where</span><span class="v">Kigali, Rwanda — venue varies nightly</span></div>
+        </div>
+      </div>
+
+      <form class="form-panel" id="contact-form">
+        <span class="lbl grey" style="display:block;margin-bottom:22px;">Send a message</span>
+        <div class="fld-row">
+          <div class="fld">
+            <label for="ct-name">Name</label>
+            <input id="ct-name" type="text" placeholder="Your name" required />
+          </div>
+          <div class="fld">
+            <label for="ct-email">Email</label>
+            <input id="ct-email" type="email" placeholder="you@email.com" required />
+          </div>
+        </div>
+        <div class="fld">
+          <label for="ct-topic">Subject</label>
+          <select id="ct-topic">
+            <option>Private screening</option>
+            <option>Partnership or sponsorship</option>
+            <option>Venue offer</option>
+            <option>Programming suggestion</option>
+            <option>Press</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label for="ct-msg">Message</label>
+          <textarea id="ct-msg" placeholder="Tell us what you have in mind"></textarea>
+        </div>
+        <button class="btn btn-block" type="submit">Send message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div id="site-footer"></div>
+<script src="js/main.js"></script>
+</body>
+</html>
