@@ -1,0 +1,145 @@
+# Velvet Cinema — site manager configuration
+# Edits here are saved straight to GitHub, which redeploys the site.
+
+backend:
+  name: github
+  repo: juniortheo/Valvet-cinema-V2
+  branch: main
+
+# Where uploaded photographs are stored, and the path written into content.
+media_folder: "assets/images"
+public_folder: "/assets/images"
+
+publish_mode: simple
+
+collections:
+
+  # ---------------------------------------------------------------
+  # UPCOMING EVENTS
+  # Add one and the ticket banner, the Tickets menu link and the
+  # "Coming up" section appear automatically. Past dates drop off.
+  # ---------------------------------------------------------------
+  - name: upcoming
+    label: "Upcoming events"
+    description: "Announce a screening. Leave this empty and the homepage shows your last event instead."
+    files:
+      - name: upcoming
+        label: "Upcoming events"
+        file: "content/upcoming.json"
+        fields:
+          - label: "Events"
+            name: events
+            widget: list
+            label_singular: "Event"
+            summary: "{{fields.title}} — {{fields.date}}"
+            required: false
+            fields:
+              - { label: "Event name", name: title, widget: string }
+              - { label: "Date", name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, picker_utc: false, hint: "The event disappears from the site by itself after this day." }
+              - { label: "Start time", name: time, widget: string, default: "6:00 PM" }
+              - { label: "Venue", name: venue, widget: string }
+              - { label: "Film", name: film, widget: string, required: false, hint: "Leave empty to show 'Film revealed soon'." }
+              - { label: "Price", name: price, widget: string, required: false, default: "From RWF 10,000" }
+              - { label: "Poster", name: poster, widget: image, required: false }
+              - { label: "Ticket link", name: tickets, widget: string, required: false, hint: "Leave empty to use the default ticket link in Site details." }
+
+  # ---------------------------------------------------------------
+  # PAST EVENTS — each one gets its own page automatically
+  # ---------------------------------------------------------------
+  - name: past
+    label: "Past events"
+    description: "Every screening you have done. The first one in this list is shown on the homepage as 'Our last event'."
+    files:
+      - name: past
+        label: "Past events"
+        file: "content/past-events.json"
+        fields:
+          - label: "Events"
+            name: events
+            widget: list
+            label_singular: "Event"
+            summary: "{{fields.title}}"
+            fields:
+              - { label: "Film / event name", name: title, widget: string }
+              - { label: "Web address", name: slug, widget: string, hint: "Lowercase with dashes, e.g. black-swan. This becomes the page link." }
+              - { label: "Headline", name: heading, widget: string, hint: "e.g. An unforgettable night" }
+              - { label: "Description", name: text, widget: text }
+              - { label: "Date", name: date, widget: string, required: false, hint: "e.g. Saturday 28 March 2026" }
+              - { label: "Start time", name: time, widget: string, required: false }
+              - { label: "Venue", name: venue, widget: string, required: false }
+              - { label: "Film details", name: film, widget: string, required: false, hint: "e.g. Black Swan (2010), dir. Darren Aronofsky" }
+              - { label: "Live music", name: music, widget: string, required: false }
+              - { label: "Sound / DJ", name: sound, widget: string, required: false }
+              - { label: "Poster", name: poster, widget: image, required: false }
+              - { label: "Main photograph", name: cover, widget: image, required: false, hint: "Used on the homepage and the events page." }
+              - { label: "Ticket artwork", name: ticket, widget: image, required: false }
+              - label: "Photographs from the night"
+                name: photos
+                widget: list
+                label_singular: "Photograph"
+                required: false
+                summary: "{{fields.alt}}"
+                fields:
+                  - { label: "Photograph", name: image, widget: image }
+                  - { label: "Description", name: alt, widget: string, hint: "Describe the photo for people using screen readers." }
+
+  # ---------------------------------------------------------------
+  # GALLERY
+  # ---------------------------------------------------------------
+  - name: gallery
+    label: "Gallery"
+    description: "Photographs on the gallery page. Add, reorder or delete freely."
+    files:
+      - name: gallery
+        label: "Gallery photographs"
+        file: "content/gallery.json"
+        fields:
+          - label: "Photographs"
+            name: photos
+            widget: list
+            label_singular: "Photograph"
+            summary: "{{fields.alt}}"
+            required: false
+            fields:
+              - { label: "Photograph", name: image, widget: image }
+              - { label: "Description", name: alt, widget: string, hint: "Describe the photo for people using screen readers." }
+
+  # ---------------------------------------------------------------
+  # PAGE TEXT
+  # ---------------------------------------------------------------
+  - name: pages
+    label: "Page text"
+    description: "The wording on the homepage, Our story, Sponsor us, Contact and Gallery pages."
+    files:
+      - name: pages
+        label: "Page text"
+        file: "content/pages.json"
+        fields:
+          - { label: "Homepage heading", name: home_heading, widget: string }
+          - { label: "Homepage text", name: home_text, widget: text }
+          - { label: "Our story — heading", name: about_heading, widget: string }
+          - { label: "Our story — text", name: about_body, widget: text, hint: "Leave a blank line between paragraphs." }
+          - { label: "Sponsor — heading", name: sponsor_heading, widget: string }
+          - { label: "Sponsor — tagline", name: sponsor_tagline, widget: string }
+          - { label: "Sponsor — text", name: sponsor_body, widget: text, hint: "Leave a blank line between paragraphs." }
+          - { label: "Contact — heading", name: contact_heading, widget: string }
+          - { label: "Contact — text", name: contact_text, widget: text }
+          - { label: "Gallery — heading", name: gallery_heading, widget: string }
+          - { label: "Gallery — text", name: gallery_text, widget: string }
+
+  # ---------------------------------------------------------------
+  # SITE DETAILS
+  # ---------------------------------------------------------------
+  - name: settings
+    label: "Site details"
+    description: "Email, social links and the ticket shop address."
+    files:
+      - name: settings
+        label: "Site details"
+        file: "content/settings.json"
+        fields:
+          - { label: "Email address", name: email, widget: string }
+          - { label: "Instagram link", name: instagram, widget: string, required: false }
+          - { label: "TikTok link", name: tiktok, widget: string, required: false, hint: "Leave empty and the TikTok icon stays hidden." }
+          - { label: "Ticket shop link", name: tickets, widget: string, required: false }
+          - { label: "Sponsorship email subject", name: sponsor_subject, widget: string }

@@ -4,7 +4,7 @@ An independent pop-up cinema in Kigali. Static site: plain HTML, CSS and JS.
 No build step, no framework, no dependencies.
 
 **Preview locally:** `python3 -m http.server` then open `http://localhost:8000`
-(opening the files directly with `file://` also works).
+(the pages fetch their content, so `file://` will not work).
 
 ---
 
@@ -15,63 +15,82 @@ No build step, no framework, no dependencies.
 | `index.html` | `/` | Home — mission, next/last event, gallery + sponsor, movies shown |
 | `about.html` | `/about` | Our story |
 | `events.html` | `/events` | All events — ticket, photographs, description per event |
-| `event-black-swan.html` | `/events/black-swan` | Black Swan, 28 March 2026 |
-| `event-the-devil-wears-prada-2.html` | `/events/the-devil-wears-prada-2` | The Devil Wears Prada 2 |
+| `event.html` | `/events/<slug>` | One event. Serves every past event, generated from content |
+| `admin/` | `/admin` | The site manager the client logs in to |
 | `gallery.html` | `/gallery` | A look back at our past events |
 | `sponsor.html` | `/sponsor` | Sponsor us |
 | `contact.html` | `/contact` | Contact us |
 
 Header and footer are rendered from `js/site.js`, so editing them once updates
-every page.
+every page. All wording and events come from `content/` — see below.
 
 ---
 
-## Announcing a new event
+## The site manager (CMS)
 
-Open `js/site.js` and add to the `EVENTS` array near the top:
+The client manages everything at **`/admin`** on the live site —
+e.g. `https://your-site.netlify.app/admin`.
 
-```js
-var EVENTS = [
-  { title:"Halloween Night", date:"2026-10-30", time:"6:30 PM",
-    venue:"Utakah, Masoro", film:"American Psycho",
-    price:"From RWF 10,000",
-    tickets:"https://velvetcinemakgl.sinc.events" }
-];
-```
+She signs in with GitHub. Every change she makes is committed to this repo
+and Netlify redeploys automatically, so nothing can be lost and every edit
+has a history.
 
-That one change automatically:
+**What she can do there:**
 
-- shows the **ticket banner** across the top of every page
-- adds **Tickets** to the main navigation
-- shows a **Coming up** section on the homepage with a *Get tickets* button
-- replaces *Our last event* on the homepage with the upcoming one
+| Section | What it controls |
+|---|---|
+| Upcoming events | Announce a screening. Adding one raises the ticket banner, the Tickets menu link and the "Coming up" section automatically, and swaps the homepage from "Our last event" to the upcoming one. Past dates drop off by themselves. |
+| Past events | Every screening. Each gets its own page at `/events/<web-address>` automatically. Add photographs, poster, ticket artwork, venue, music. |
+| Gallery | Add, reorder and delete photographs on the gallery page. |
+| Page text | Wording on the homepage, Our story, Sponsor us, Contact and Gallery. |
+| Site details | Email, Instagram, TikTok, ticket shop link. |
 
-When the date passes, all of it disappears again on its own. Leave `EVENTS`
-empty and the homepage shows *Our last event* instead.
+Photographs are uploaded through the media library and land in
+`assets/images/`. She can delete them there too.
 
-After a screening, move it into `PAST_EVENTS` (same file, newest first) and
-the homepage picks it up as the new last event.
+### One-time setup so she can log in
+
+The CMS needs permission to talk to GitHub on her behalf.
+
+1. Give her GitHub account **write access** to this repository
+   (*Settings → Collaborators*). She needs a free GitHub account.
+2. Create a GitHub OAuth app: *GitHub → Settings → Developer settings →
+   OAuth Apps → New OAuth App*.
+   - Homepage URL: your Netlify site address
+   - Authorization callback URL: as given by your OAuth client in step 3
+3. Connect an OAuth client. Either:
+   - **On Netlify** — *Site configuration → Access control → OAuth →
+     Install provider → GitHub*, pasting the client ID and secret; or
+   - **Sveltia's own client**, deployed free to Cloudflare Workers:
+     <https://github.com/sveltia/sveltia-cms-auth>
+
+To test before that is wired up, open `/admin`, click the small arrow next
+to *Sign In* and choose **Use Personal Access Token**. That works
+immediately but is meant for developers, not for the client.
+
+If the repository is ever renamed, update `repo:` at the top of
+`admin/config.yml`.
 
 ---
 
-## Site details in one place
+## How content reaches the pages
 
-Also at the top of `js/site.js`:
+Content lives as JSON in `content/`:
 
-```js
-var SITE = {
-  email: "velvetcinemakgl@gmail.com",
-  instagram: "https://instagram.com/velvetcinemakgl",
-  tiktok: "",                                   // TODO: add the TikTok URL
-  tickets: "https://velvetcinemakgl.sinc.events",
-  sponsorSubject: "Velvet Cinema Partnerships"
-};
-```
+| File | Holds |
+|---|---|
+| `content/settings.json` | Email, social links, ticket shop link |
+| `content/pages.json` | Wording for each page |
+| `content/upcoming.json` | Upcoming events |
+| `content/past-events.json` | Past events, each with its own photographs |
+| `content/gallery.json` | Gallery photographs |
 
-The TikTok icon stays hidden until a URL is added there. *Sponsor us* buttons
-open an email to the address above with the subject line already filled in.
+`js/site.js` fetches these at page load and renders the header, footer and
+page content. There is no build step — editing a JSON file, by hand or
+through `/admin`, changes the site.
 
----
+Because the pages fetch these files, **preview locally with a server**
+(`python3 -m http.server`) rather than opening the HTML files directly.
 
 ## Images
 

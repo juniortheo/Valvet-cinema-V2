@@ -1,0 +1,85 @@
+{
+  "events": [
+    {
+      "slug": "the-devil-wears-prada-2",
+      "title": "The Devil Wears Prada 2",
+      "heading": "An unforgettable night",
+      "text": "We showed the newly released The Devil Wears Prada 2, followed by an incredible music performance by Sema Sole and electrifying sound by Chris Ruti.",
+      "date": "",
+      "time": "",
+      "venue": "",
+      "film": "The Devil Wears Prada 2",
+      "music": "Sema Sole",
+      "sound": "Chris Ruti",
+      "poster": "/assets/images/poster-tdwp2.jpg",
+      "cover": "/assets/images/last-event.jpg",
+      "ticket": "",
+      "photos": []
+    },
+    {
+      "slug": "black-swan",
+      "title": "Black Swan",
+      "heading": "A memorable and beautiful first event",
+      "text": "We showed the classic psychological horror film Black Swan and ended the night with an amazing performance by the one and only Sheja Lau.",
+      "date": "Saturday 28 March 2026",
+      "time": "6:00 PM",
+      "venue": "Utakah, Masoro — Kigali",
+      "film": "Black Swan (2010), dir. Darren Aronofsky",
+      "music": "Sheja Lau",
+      "sound": "",
+      "poster": "/assets/images/poster-black-swan.jpg",
+      "cover": "/assets/images/event-01.jpg",
+      "ticket": "/assets/images/ticket-banner.jpg",
+      "photos": [
+        {
+          "image": "/assets/images/event-02.jpg",
+          "alt": "Two guests smiling together at the screening"
+        },
+        {
+          "image": "/assets/images/event-05.jpg",
+          "alt": "Two guests smiling beneath the garden lights"
+        },
+        {
+          "image": "/assets/images/event-06.jpg",
+          "alt": "Guests posing together at the end of the night"
+        },
+        {
+          "image": "/assets/images/event-08.jpg",
+          "alt": "Three guests together at the screening"
+        },
+        {
+          "image": "/assets/images/event-09.jpg",
+          "alt": "Sheja Lau playing guitar against a warm lit wall"
+        },
+        {
+          "image": "/assets/images/event-10.jpg",
+          "alt": "Sheja Lau performing into the microphone"
+        },
+        {
+          "image": "/assets/images/still-01.jpg",
+          "alt": "Sheja Lau performing her opening set"
+        },
+        {
+          "image": "/assets/images/still-03.jpg",
+          "alt": "Guests settling in among the greenery"
+        },
+        {
+          "image": "/assets/images/still-05.jpg",
+          "alt": "The garden filling up before the film begins"
+        },
+        {
+          "image": "/assets/images/tile-season.jpg",
+          "alt": "Garden seating and string lights before the screening"
+        },
+        {
+          "image": "/assets/images/tile-support.jpg",
+          "alt": "Loungers and tropical plants in the garden venue"
+        },
+        {
+          "image": "/assets/images/event-12.jpg",
+          "alt": "Garden seating and greenery at the venue"
+        }
+      ]
+    }
+  ]
+}

@@ -1,91 +1,12 @@
 /* ==========================================================
-   VELVET CINEMA — shared site script
-   Header and footer are rendered from here so every page
-   stays in sync. Set <body data-page="..."> for nav state.
+   VELVET CINEMA — site script
+
+   All content comes from the JSON files in /content, which are
+   edited through the site manager at /admin. Nothing in this
+   file needs editing to change wording, events or photographs.
    ========================================================== */
 
-/* ----------------------------------------------------------
-   EDIT HERE — site details
-   ---------------------------------------------------------- */
-var SITE = {
-  email: "velvetcinemakgl@gmail.com",
-  instagram: "https://instagram.com/velvetcinemakgl",
-  tiktok: "",                                   // TODO: add the TikTok URL
-  tickets: "https://velvetcinemakgl.sinc.events",
-  sponsorSubject: "Velvet Cinema Partnerships"
-};
-
-/* ----------------------------------------------------------
-   EDIT HERE — to announce a night, add an event to EVENTS.
-   Leave EVENTS empty and the ticket banner, the "Tickets"
-   nav link and the "Our next event" block stay hidden, and
-   the homepage shows "Our last event" instead.
-   Past dates disappear on their own.
-     date: "YYYY-MM-DD"  (stays visible through that day)
-     film: null  ->  "Film revealed soon"
-   ---------------------------------------------------------- */
-var EVENTS = [
-  /* Example — delete the comment markers to use:
-  { title:"Halloween Night", date:"2026-10-30", time:"6:30 PM",
-    venue:"Utakah, Masoro", film:"American Psycho",
-    price:"From RWF 10,000", poster:"assets/images/poster-halloween.jpg",
-    tickets:"https://velvetcinemakgl.sinc.events" }
-  */
-];
-
-/* ----------------------------------------------------------
-   Past events — newest first. The first entry is shown on the
-   homepage as "Our last event" when nothing is upcoming.
-   ---------------------------------------------------------- */
-var PAST_EVENTS = [
-  {
-    slug: "the-devil-wears-prada-2",
-    title: "The Devil Wears Prada 2",
-    heading: "An unforgettable night",
-    text: "We showed the newly released The Devil Wears Prada 2, followed by an incredible music performance by Sema Sole and electrifying sound by Chris Ruti.",
-    date: null,
-    venue: null,
-    poster: "assets/images/poster-tdwp2.jpg",
-    cover: "assets/images/last-event.jpg",
-    ticket: null,
-    shots: []
-  },
-  {
-    slug: "black-swan",
-    title: "Black Swan",
-    heading: "A memorable and beautiful first event",
-    text: "We showed the classic psychological horror film Black Swan and ended the night with an amazing performance by the one and only Sheja Lau.",
-    date: "Saturday 28 March 2026",
-    time: "6:00 PM",
-    venue: "Utakah, Masoro — Kigali",
-    film: "Black Swan (2010), dir. Darren Aronofsky",
-    music: "Live performance by Sheja Lau",
-    poster: "assets/images/poster-black-swan.jpg",
-    cover: "assets/images/event-01.jpg",
-    ticket: "assets/images/ticket-banner.jpg",
-    shots: [
-      "assets/images/event-01.jpg","assets/images/event-02.jpg","assets/images/event-03.jpg",
-      "assets/images/event-04.jpg","assets/images/event-05.jpg","assets/images/event-06.jpg",
-      "assets/images/event-07.jpg","assets/images/event-08.jpg","assets/images/event-09.jpg",
-      "assets/images/event-10.jpg","assets/images/event-11.jpg","assets/images/event-12.jpg",
-      "assets/images/still-01.jpg","assets/images/still-02.jpg","assets/images/still-03.jpg",
-      "assets/images/still-04.jpg","assets/images/still-05.jpg","assets/images/spotlight.jpg",
-      "assets/images/tile-season.jpg","assets/images/tile-store.jpg",
-      "assets/images/tile-archive.jpg","assets/images/tile-support.jpg"
-    ]
-  }
-];
-
-/* ----------------------------------------------------------
-   Newsletter delivery.
-   Leave SHEETS_ENDPOINT empty to use Netlify Forms (the
-   hidden form in index.html is what Netlify detects).
-   To send straight to Google Sheets instead, publish an
-   Apps Script web app and paste its /exec URL here.
-   ---------------------------------------------------------- */
-var SHEETS_ENDPOINT = "";
-
-/* ========================================================== */
+var CONTENT = {};   // filled on load
 
 var ICON = {
   ig:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>',
@@ -93,60 +14,102 @@ var ICON = {
   mail:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6.5L20.5 7"/></svg>'
 };
 
+/* leave this empty to use Netlify Forms for newsletter sign-ups,
+   or paste a Google Apps Script /exec URL to send them to a sheet */
+var SHEETS_ENDPOINT = "";
+
+/* ---------- helpers ---------- */
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){
   return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
 
-function sponsorMailto(){
-  return "mailto:"+SITE.email+"?subject="+encodeURIComponent(SITE.sponsorSubject);
+function paras(t){
+  return String(t||"").split(/\n\s*\n/).map(function(p){
+    return "<p>"+esc(p.trim()).replace(/\n/g,"<br>")+"</p>";
+  }).join("");
 }
 
-/* ---------- upcoming ---------- */
+function qs(k){
+  return new URLSearchParams(window.location.search).get(k);
+}
+
+/* The slug can arrive two ways: as /events/black-swan (Netlify rewrites
+   this to event.html but the address bar keeps the pretty path, so the
+   query string is empty), or as event.html?slug=black-swan. Try both. */
+function eventSlug(){
+  var m=window.location.pathname.match(/\/events\/([^\/?#]+)\/?$/);
+  if(m && m[1]) return decodeURIComponent(m[1]);
+  return qs("slug");
+}
+
+function sponsorMailto(){
+  var s=CONTENT.settings||{};
+  return "mailto:"+(s.email||"")+"?subject="+encodeURIComponent(s.sponsor_subject||"Sponsorship");
+}
+
+/* show a background image only once it has loaded */
+function loadImg(el,src,clearText){
+  if(!el||!src) return;
+  var i=new Image();
+  i.onload=function(){ el.style.backgroundImage='url("'+src+'")'; if(clearText) el.textContent=""; };
+  i.src=src;
+}
+
 function upcomingEvents(){
+  var list=(CONTENT.upcoming&&CONTENT.upcoming.events)||[];
   var today=new Date(); today.setHours(0,0,0,0);
-  return EVENTS.filter(function(e){
-    var p=e.date.split("-"); return new Date(p[0],p[1]-1,p[2])>=today;
+  return list.filter(function(e){
+    if(!e||!e.date) return false;
+    var p=String(e.date).slice(0,10).split("-");
+    return new Date(+p[0],+p[1]-1,+p[2])>=today;
   }).sort(function(a,b){return a.date<b.date?-1:1;});
 }
 
+function pastEvents(){ return (CONTENT.past&&CONTENT.past.events)||[]; }
+
 /* ---------- header ---------- */
-function buildHeader(page){
-  var up=upcomingEvents();
-  var items=[
-    up.length?'<li><a href="index.html#upcoming">Tickets</a></li>':'',
-    '<li><a href="about.html"'+(page==="about"?' aria-current="page"':'')+'>Our story</a></li>',
-    '<li><a href="events.html"'+(page==="events"?' aria-current="page"':'')+'>Events</a></li>',
-    '<li><a href="gallery.html"'+(page==="gallery"?' aria-current="page"':'')+'>Gallery</a></li>',
-    '<li><a href="sponsor.html"'+(page==="sponsor"?' aria-current="page"':'')+'>Sponsor us</a></li>'
-  ].join("");
+function renderHeader(page){
+  var host=document.getElementById("site-header");
+  if(!host) return;
+  var up=upcomingEvents(), s=CONTENT.settings||{};
 
   var banner="";
   if(up.length){
-    var f=up[0];
-    banner='<div class="banner">Tickets for '+esc(f.title)+' are on sale now. '+
-           '<a href="'+esc(f.tickets||SITE.tickets)+'">Get yours</a></div>';
+    banner='<div class="banner">Tickets for '+esc(up[0].title)+' are on sale now. '+
+           '<a href="'+esc(up[0].tickets||s.tickets||"#upcoming")+'">Get yours</a></div>';
   }
 
-  return banner+
-  '<header><div class="wrap nav">'+
-    '<a class="logo" href="index.html" aria-label="Velvet Cinema">Velvet<br>Cinema</a>'+
-    '<nav aria-label="Main"><ul>'+items+'</ul></nav>'+
-  '</div></header>';
+  var items=[
+    up.length?'<li><a href="/#upcoming">Tickets</a></li>':'',
+    '<li><a href="/about"'+(page==="about"?' aria-current="page"':'')+'>Our story</a></li>',
+    '<li><a href="/events"'+(page==="events"?' aria-current="page"':'')+'>Events</a></li>',
+    '<li><a href="/gallery"'+(page==="gallery"?' aria-current="page"':'')+'>Gallery</a></li>',
+    '<li><a href="/sponsor"'+(page==="sponsor"?' aria-current="page"':'')+'>Sponsor us</a></li>'
+  ].join("");
+
+  host.innerHTML = banner+
+    '<header><div class="wrap nav">'+
+      '<a class="logo" href="/" aria-label="Velvet Cinema">Velvet<br>Cinema</a>'+
+      '<nav aria-label="Main"><ul>'+items+'</ul></nav>'+
+    '</div></header>';
 }
 
 /* ---------- footer ---------- */
-function buildFooter(){
-  var tiktok=SITE.tiktok
-    ? '<li><a href="'+esc(SITE.tiktok)+'" aria-label="TikTok">'+ICON.tt+'</a></li>' : '';
-  return '<footer><div class="wrap">'+
+function renderFooter(){
+  var host=document.getElementById("site-footer");
+  if(!host) return;
+  var s=CONTENT.settings||{};
+  var social="";
+  if(s.instagram) social+='<li><a href="'+esc(s.instagram)+'" aria-label="Instagram">'+ICON.ig+'</a></li>';
+  if(s.tiktok)    social+='<li><a href="'+esc(s.tiktok)+'" aria-label="TikTok">'+ICON.tt+'</a></li>';
+  if(s.email)     social+='<li><a href="mailto:'+esc(s.email)+'" aria-label="Email">'+ICON.mail+'</a></li>';
+
+  host.innerHTML=
+  '<footer><div class="wrap">'+
     '<div class="fgrid">'+
       '<div>'+
         '<h3 class="flogo" aria-label="Velvet Cinema">Velvet<br>Cinema</h3>'+
         '<p>An independent pop-up cinema in Kigali, Rwanda.</p>'+
-        '<ul class="icons">'+
-          '<li><a href="'+esc(SITE.instagram)+'" aria-label="Instagram">'+ICON.ig+'</a></li>'+
-          tiktok+
-          '<li><a href="mailto:'+esc(SITE.email)+'" aria-label="Email">'+ICON.mail+'</a></li>'+
-        '</ul>'+
+        '<ul class="icons">'+social+'</ul>'+
       '</div>'+
       '<div>'+
         '<h3>Newsletter</h3>'+
@@ -159,9 +122,9 @@ function buildFooter(){
         '<p class="consent">By signing up, you agree to receive email updates about Velvet Cinema’s screenings and events. You can unsubscribe at any time.</p>'+
         '<p class="formnote" id="nl-note" role="status"></p>'+
         '<ul class="links">'+
-          '<li><a href="about.html">Our Story</a></li>'+
-          '<li><a href="contact.html">Contact Us</a></li>'+
-          '<li><a href="sponsor.html">Sponsor Us</a></li>'+
+          '<li><a href="/about">Our Story</a></li>'+
+          '<li><a href="/contact">Contact Us</a></li>'+
+          '<li><a href="/sponsor">Sponsor Us</a></li>'+
         '</ul>'+
       '</div>'+
     '</div>'+
@@ -169,15 +132,175 @@ function buildFooter(){
   '</div></footer>';
 }
 
-/* ---------- show an image only if the file exists ---------- */
-function loadImg(el,src,clearText){
-  if(!el||!src) return;
-  var i=new Image();
-  i.onload=function(){
-    el.style.backgroundImage='url("'+src+'")';
-    if(clearText) el.textContent="";
-  };
-  i.src=src;
+/* ---------- homepage ---------- */
+function renderHome(){
+  var homeH=document.getElementById("home-heading");
+  if(!homeH) return;
+  var p=CONTENT.pages||{}, s=CONTENT.settings||{};
+
+  homeH.textContent=p.home_heading||"";
+  var homeB=document.getElementById("home-body");
+  if(homeB) homeB.innerHTML=paras(p.home_text);
+
+  var up=upcomingEvents();
+  var block=document.getElementById("eventBlock");
+  var upSec=document.getElementById("upcoming");
+
+  if(up.length){
+    var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    document.getElementById("eventList").innerHTML=up.map(function(e){
+      var d=String(e.date).slice(0,10).split("-");
+      return '<div class="ev"><div class="d">'+parseInt(d[2],10)+
+        '<small>'+M[+d[1]-1]+' '+d[0]+'</small></div>'+
+        '<div><h3>'+esc(e.title)+'</h3><p>'+esc(e.film||"Film revealed soon")+
+        ' &middot; '+esc(e.time)+' &middot; '+esc(e.venue)+
+        (e.price?' &middot; '+esc(e.price):'')+'</p></div>'+
+        '<a class="btn solid" href="'+esc(e.tickets||s.tickets||"#")+'">Get tickets</a></div>';
+    }).join("");
+    upSec.classList.remove("hidden");
+    if(block) block.closest("section").classList.add("hidden");
+  }else{
+    var last=pastEvents()[0];
+    if(!last){ if(block) block.closest("section").classList.add("hidden"); return; }
+    block.querySelector(".kicker").textContent="Our last event";
+    block.querySelector("h2").textContent=last.heading||"";
+    block.querySelector(".ttl").textContent=last.title||"";
+    block.querySelector(".body").textContent=last.text||"";
+    block.querySelector(".btn").href="/events/"+encodeURIComponent(last.slug);
+    loadImg(block.querySelector(".img"),last.cover,true);
+  }
+
+  /* movies shown */
+  var movies=document.getElementById("moviesList");
+  if(movies){
+    movies.innerHTML=pastEvents().map(function(e){
+      return '<article class="film"><a href="/events/'+encodeURIComponent(e.slug)+'">'+
+        '<div class="poster" role="img" aria-label="Poster for the '+esc(e.title)+' screening" data-img="'+esc(e.poster||"")+'">Poster coming soon</div>'+
+        '<h3>'+esc(e.title)+'</h3></a></article>';
+    }).join("");
+  }
+
+  /* gallery teaser */
+  var teaser=document.querySelector("#galleryTeaser");
+  if(teaser){
+    var ph=(CONTENT.gallery&&CONTENT.gallery.photos)||[];
+    if(ph.length){ teaser.dataset.img=ph[0].image; teaser.setAttribute("aria-label",ph[0].alt||""); }
+  }
+}
+
+/* ---------- events page ---------- */
+function renderEvents(){
+  var host=document.getElementById("eventsList");
+  if(!host) return;
+  host.innerHTML=pastEvents().map(function(e,i){
+    var meta=[e.date,e.venue].filter(Boolean).join(" &middot; ") || (i===0?"Our last event":"");
+    var shots=(e.photos||[]).slice(0,4);
+    var right = shots.length
+      ? '<div class="shots">'+shots.map(function(p){
+          return '<div class="img r11" data-img="'+esc(p.image)+'" role="img" aria-label="'+esc(p.alt||"")+'">Photo</div>';
+        }).join("")+'</div>'
+      : '<div class="img r43" data-img="'+esc(e.cover||"")+'" role="img" aria-label="Photograph from '+esc(e.title)+'">Photographs from this night are coming soon</div>';
+    var ticket = e.ticket
+      ? '<figure class="stub"><div class="img" style="aspect-ratio:11/4" data-img="'+esc(e.ticket)+'" role="img" aria-label="Ticket for '+esc(e.title)+'">Ticket</div>'+
+        '<figcaption>The ticket for the night</figcaption></figure>' : '';
+    return '<article class="eventcard"><div>'+
+      (meta?'<p class="meta">'+meta+'</p>':'')+
+      '<h2>'+esc(e.heading)+'</h2>'+
+      '<p class="sub">'+esc(e.title)+'</p>'+
+      '<p>'+esc(e.text)+'</p>'+ticket+
+      '<a class="btn" href="/events/'+encodeURIComponent(e.slug)+'">See the night and more photos</a>'+
+      '</div>'+right+'</article>';
+  }).join("");
+}
+
+/* ---------- single event page ---------- */
+function renderEvent(){
+  var host=document.getElementById("eventDetail");
+  if(!host) return;
+  var slug=eventSlug();
+  var e=pastEvents().filter(function(x){return x.slug===slug;})[0];
+
+  if(!e){
+    host.innerHTML='<div class="wrap"><h1>Event not found</h1>'+
+      '<p style="margin-top:1rem">We could not find that screening.</p>'+
+      '<p style="margin-top:1.5rem"><a class="btn" href="/events">All events</a></p></div>';
+    return;
+  }
+  document.title=e.title+" | Velvet Cinema";
+
+  var facts=[["Date",e.date],["Doors",e.time],["Venue",e.venue],
+             ["Film",e.film],["Live music",e.music],["Sound",e.sound]]
+    .filter(function(f){return f[1];})
+    .map(function(f){return '<div><dt>'+esc(f[0])+'</dt><dd>'+esc(f[1])+'</dd></div>';}).join("");
+
+  var ticket = e.ticket
+    ? '<figure class="stub" style="max-width:520px"><div class="img" style="aspect-ratio:11/4" data-img="'+esc(e.ticket)+'" role="img" aria-label="Ticket for '+esc(e.title)+'">Ticket</div>'+
+      '<figcaption>The ticket for the night</figcaption></figure>' : '';
+
+  host.innerHTML='<div class="wrap">'+
+    '<p class="crumbs"><a href="/events">Events</a> &nbsp;/&nbsp; '+esc(e.title)+'</p>'+
+    '<div class="detail">'+
+      '<div class="poster r23" data-img="'+esc(e.poster||"")+'" role="img" aria-label="Poster for the '+esc(e.title)+' screening">Poster coming soon</div>'+
+      '<div>'+
+        '<h1>'+esc(e.heading)+'</h1>'+
+        '<p class="lead" style="margin-top:1rem">'+esc(e.text)+'</p>'+
+        (facts?'<dl class="facts">'+facts+'</dl>':'')+
+        ticket+
+      '</div>'+
+    '</div></div>';
+
+  var photos=e.photos||[];
+  var gal=document.getElementById("eventPhotos");
+  if(gal){
+    if(photos.length){
+      gal.innerHTML='<div class="wrap"><h2>Photographs from the night</h2><div class="grid-gal">'+
+        photos.map(function(p){
+          return '<div class="shot"><img src="'+esc(p.image)+'" alt="'+esc(p.alt||"")+'" loading="lazy" decoding="async"></div>';
+        }).join("")+'</div></div>';
+    }else{
+      gal.innerHTML='<div class="wrap"><h2>Photographs from the night</h2>'+
+        '<p>Photographs from this screening are on their way. In the meantime, see the gallery from our other nights.</p>'+
+        '<p style="margin-top:1.25rem"><a class="btn" href="/gallery">See the gallery</a></p></div>';
+    }
+  }
+}
+
+/* ---------- gallery page ---------- */
+function renderGallery(){
+  var host=document.getElementById("galleryGrid");
+  if(!host) return;
+  var p=CONTENT.pages||{};
+  var head=document.getElementById("galleryHead");
+  if(head){
+    head.querySelector("h1").textContent=p.gallery_heading||"Gallery";
+    head.querySelector("p").textContent=p.gallery_text||"";
+  }
+  var photos=(CONTENT.gallery&&CONTENT.gallery.photos)||[];
+  host.innerHTML=photos.map(function(x){
+    return '<div class="shot"><img src="'+esc(x.image)+'" alt="'+esc(x.alt||"")+'" loading="lazy" decoding="async"></div>';
+  }).join("") || '<p>Photographs are on their way.</p>';
+}
+
+/* ---------- simple text pages ---------- */
+function renderTextPages(){
+  var p=CONTENT.pages||{}, s=CONTENT.settings||{};
+
+  var abH=document.getElementById("about-heading");
+  var abB=document.getElementById("about-body");
+  if(abH) abH.textContent=p.about_heading||"";
+  if(abB) abB.innerHTML=paras(p.about_body);
+  var set=function(id,val){ var el=document.getElementById(id); if(el) el.textContent=val||""; };
+  var html=function(id,val){ var el=document.getElementById(id); if(el) el.innerHTML=val||""; };
+
+  set("sponsor-heading",p.sponsor_heading);
+  set("sponsor-tagline",p.sponsor_tagline);
+  html("sponsor-body",paras(p.sponsor_body));
+
+  set("contact-heading",p.contact_heading);
+  set("contact-tagline",p.contact_text);
+  var mail=document.getElementById("contact-email");
+  if(mail){ mail.href="mailto:"+(s.email||""); mail.textContent=s.email||""; }
+  document.querySelectorAll("[data-sponsor]").forEach(function(a){ a.href=sponsorMailto(); });
 }
 
 /* ---------- newsletter ---------- */
@@ -192,28 +315,23 @@ function wireNewsletter(){
     var btn=form.querySelector("button");
     btn.disabled=true; btn.textContent="Signing up…";
 
-    var url, body;
-    if(SHEETS_ENDPOINT){
-      url=SHEETS_ENDPOINT;
-      body=new URLSearchParams({email:email});
-    }else{
-      url="/";                               // Netlify Forms
-      body=new URLSearchParams({"form-name":"newsletter",email:email});
-    }
+    var url = SHEETS_ENDPOINT || "/";
+    var body = SHEETS_ENDPOINT
+      ? new URLSearchParams({email:email})
+      : new URLSearchParams({"form-name":"newsletter",email:email});
 
     fetch(url,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:body.toString()})
       .then(function(){ done("Thank you — you’re on the list."); })
-      .catch(function(){ done("We couldn’t save that just now. Please email "+SITE.email+"."); });
+      .catch(function(){ done("We couldn’t save that just now. Please email "+((CONTENT.settings||{}).email||"us")+"."); });
 
     function done(msg){
-      form.reset();
-      btn.disabled=false; btn.textContent="Sign up";
+      form.reset(); btn.disabled=false; btn.textContent="Sign up";
       if(note){ note.textContent=msg; note.classList.add("show"); }
     }
   });
 }
 
-/* ---------- gallery lightbox ---------- */
+/* ---------- lightbox ---------- */
 function wireLightbox(){
   var lb=document.querySelector(".lb");
   if(!lb) return;
@@ -223,16 +341,12 @@ function wireLightbox(){
 
   function show(i){
     idx=(i+shots.length)%shots.length;
-    big.src=shots[idx].src;
-    big.alt=shots[idx].alt||"";
-    lb.classList.add("open");
-    document.body.style.overflow="hidden";
+    big.src=shots[idx].src; big.alt=shots[idx].alt||"";
+    lb.classList.add("open"); document.body.style.overflow="hidden";
   }
   function close(){ lb.classList.remove("open"); document.body.style.overflow=""; }
 
-  shots.forEach(function(img,i){
-    img.parentNode.addEventListener("click",function(){show(i);});
-  });
+  shots.forEach(function(img,i){ img.parentNode.addEventListener("click",function(){show(i);}); });
   lb.querySelector(".x").addEventListener("click",close);
   lb.querySelector(".p").addEventListener("click",function(e){e.stopPropagation();show(idx-1);});
   lb.querySelector(".n").addEventListener("click",function(e){e.stopPropagation();show(idx+1);});
@@ -245,54 +359,33 @@ function wireLightbox(){
   });
 }
 
-/* ---------- homepage: next or last event ---------- */
-function renderHome(){
-  var host=document.getElementById("eventBlock");
-  if(!host) return;
-  var up=upcomingEvents();
-
-  if(up.length){
-    var list=document.getElementById("eventList");
-    if(list){
-      list.innerHTML=up.map(function(e){
-        var p=e.date.split("-");
-        var M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-        return '<div class="ev"><div class="d">'+parseInt(p[2],10)+
-          '<small>'+M[p[1]-1]+' '+p[0]+'</small></div>'+
-          '<div><h3>'+esc(e.title)+'</h3><p>'+esc(e.film?e.film:"Film revealed soon")+
-          ' &middot; '+esc(e.time)+' &middot; '+esc(e.venue)+
-          (e.price?' &middot; '+esc(e.price):'')+'</p></div>'+
-          '<a class="btn solid" href="'+esc(e.tickets||SITE.tickets)+'">Get tickets</a></div>';
-      }).join("");
-      document.getElementById("upcoming").classList.remove("hidden");
-    }
-    host.classList.add("hidden");
-    return;
-  }
-
-  /* nothing upcoming -> show the last event */
-  var last=PAST_EVENTS[0];
-  host.querySelector(".kicker").textContent="Our last event";
-  host.querySelector("h2").textContent=last.heading;
-  host.querySelector(".ttl").textContent=last.title;
-  host.querySelector(".body").textContent=last.text;
-  var link=host.querySelector(".btn");
-  link.href="event-"+last.slug+".html";
-  loadImg(host.querySelector(".img"),last.cover,true);
+/* ---------- boot ---------- */
+function loadContent(){
+  var files=["settings","pages","upcoming","past-events","gallery"];
+  return Promise.all(files.map(function(f){
+    return fetch("/content/"+f+".json",{cache:"no-cache"})
+      .then(function(r){ return r.ok?r.json():{}; })
+      .catch(function(){ return {}; });
+  })).then(function(res){
+    CONTENT.settings=res[0]; CONTENT.pages=res[1];
+    CONTENT.upcoming=res[2]; CONTENT.past=res[3]; CONTENT.gallery=res[4];
+  });
 }
 
-/* ---------- boot ---------- */
 document.addEventListener("DOMContentLoaded",function(){
-  var page=document.body.dataset.page||"";
-  var h=document.getElementById("site-header");
-  var f=document.getElementById("site-footer");
-  if(h) h.innerHTML=buildHeader(page);
-  if(f) f.innerHTML=buildFooter();
-
-  document.querySelectorAll("[data-sponsor]").forEach(function(a){ a.href=sponsorMailto(); });
-  document.querySelectorAll("[data-img]").forEach(function(el){ loadImg(el,el.dataset.img,true); });
-
-  renderHome();
-  wireNewsletter();
-  wireLightbox();
+  loadContent().then(function(){
+    var page=document.body.dataset.page||"";
+    renderHeader(page);
+    renderFooter();
+    renderHome();
+    renderEvents();
+    renderEvent();
+    renderGallery();
+    renderTextPages();
+    /* any element with data-img gets its background once loaded */
+    document.querySelectorAll("[data-img]").forEach(function(el){ loadImg(el,el.dataset.img,true); });
+    wireNewsletter();
+    wireLightbox();
+    document.body.classList.add("ready");
+  });
 });

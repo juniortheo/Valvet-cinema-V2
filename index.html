@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
+<link rel="stylesheet" href="/css/site.css">
 </head>
 <body data-page="home">
 
@@ -16,7 +16,6 @@
 
 <main>
 
-<!-- Upcoming events: shown only when EVENTS has a future date -->
 <section class="upcoming hidden" id="upcoming">
   <div class="wrap">
     <h2>Coming up</h2>
@@ -24,76 +23,52 @@
   </div>
 </section>
 
-<!-- Mission -->
-<section class="mission band" id="about">
+<section class="mission band">
   <div class="wrap">
-    <h2>A curated cinema experience just for Kigali</h2>
-    <p>We were inspired by arthouse movie theaters in cities like Paris and Amsterdam. Kigali’s cultural scene is growing, yet access to critically acclaimed films is still limited. Velvet Cinema was created to enrich film culture by showing more memorable iconic films. We screen movies in fun and interactive events with the goal to soon become our own established movie theater.</p>
-    <p><a class="btn" href="about.html">Our story</a></p>
+    <h2 id="home-heading"></h2>
+    <div id="home-body"></div>
+    <p><a class="btn" href="/about">Our story</a></p>
   </div>
 </section>
 
-<!-- Our next event / Our last event -->
 <section id="last-event">
   <div class="wrap last" id="eventBlock">
     <div class="img r43" role="img" aria-label="Photograph from our last event">Photographs from this night are coming soon</div>
     <div>
-      <p class="kicker">Our last event</p>
-      <h2>An unforgettable night</h2>
-      <h3 class="ttl" style="font-size:2rem;margin-bottom:.75rem">The Devil Wears Prada 2</h3>
-      <p class="body">We showed the newly released The Devil Wears Prada 2, followed by an incredible music performance by Sema Sole and electrifying sound by Chris Ruti.</p>
-      <a class="btn" href="event-the-devil-wears-prada-2.html">See the night and more photos</a>
+      <p class="kicker"></p>
+      <h2></h2>
+      <h3 class="ttl" style="font-size:2rem;margin-bottom:.75rem"></h3>
+      <p class="body"></p>
+      <a class="btn" href="/events">See the night and more photos</a>
     </div>
   </div>
 </section>
 
-<!-- Gallery + Sponsor -->
 <section class="band">
   <div class="wrap two">
     <div>
       <h2>Gallery</h2>
       <p>Photos from our screenings.</p>
-      <div class="gimg" data-img="assets/images/event-01.jpg" role="img" aria-label="Guests together under string lights at a Velvet Cinema night">Photo from our gallery</div>
-      <a class="btn" href="gallery.html">See the gallery</a>
+      <div class="gimg" id="galleryTeaser" role="img" aria-label="Photograph from our gallery">Photo from our gallery</div>
+      <a class="btn" href="/gallery">See the gallery</a>
     </div>
     <div>
       <h2>Keep the projector running</h2>
       <p>Sponsor Velvet Cinema for our next event or for our long term vision.</p>
-      <a class="btn burg" href="sponsor.html">Sponsor us</a>
+      <a class="btn burg" href="/sponsor">Sponsor us</a>
     </div>
   </div>
 </section>
 
-<!-- Movies shown -->
 <section id="movies">
   <div class="wrap">
     <h2>Movies shown</h2>
-    <div class="movies">
-      <article class="film">
-        <a href="event-black-swan.html">
-          <div class="poster" data-img="assets/images/poster-black-swan.jpg" role="img" aria-label="Velvet Cinema poster for the Black Swan screening">Black Swan poster</div>
-          <h3>Black Swan</h3>
-        </a>
-      </article>
-      <article class="film">
-        <a href="event-the-devil-wears-prada-2.html">
-          <div class="poster" data-img="assets/images/poster-tdwp2.jpg" role="img" aria-label="Poster for The Devil Wears Prada 2 screening">Poster coming soon</div>
-          <h3>The Devil Wears Prada 2</h3>
-        </a>
-      </article>
-    </div>
+    <div class="movies" id="moviesList"></div>
   </div>
 </section>
-
 </main>
 
 <div id="site-footer"></div>
-
-<!-- Netlify Forms detection stub. Keeps the JS-rendered footer form working. -->
-<form name="newsletter" netlify netlify-honeypot="bot-field" hidden>
-  <input type="email" name="email">
-</form>
-
-<script src="js/site.js"></script>
+<script src="/js/site.js"></script>
 </body>
 </html>
