@@ -20,39 +20,37 @@ Static site. No build step, no framework. Open `index.html` in a browser, or upl
 
 ---
 
-## ADDING IMAGES — read this first
+## Images
 
-Put every image in `assets/images/` using the **exact filenames below**. Until a file exists, the site shows a labelled placeholder — nothing breaks, so you can add them a few at a time.
+All photographs live in `assets/images/`, already resized (max 2000px) and
+compressed (~6.7 MB total). They come from the **Black Swan** screening at
+Atelier Ikaze, Kigali — Sat 28 March 2026, with a live set by Sheja Lau.
 
-### Home
-| Filename | Where | Best size |
-|---|---|---|
-| `spotlight.jpg` | Big hero image | 2000 × 1200 |
-| `tile-season.jpg` | Large mosaic tile | 1600 × 900 |
-| `tile-store.jpg` | Tall tile | 800 × 1000 |
-| `tile-archive.jpg` | Tile | 900 × 600 |
-| `tile-gallery.jpg` | Tile | 900 × 600 |
-| `tile-support.jpg` | Tile | 900 × 600 |
-| `event-01.jpg` … `event-05.jpg` | Pictures strip | 900 × 600 |
+| File | Content |
+|---|---|
+| `spotlight.jpg` | Home hero — the film projected in the garden |
+| `tile-season.jpg`, `tile-support.jpg` | Venue / garden before doors |
+| `tile-store.jpg`, `tile-archive.jpg` | Sheja Lau performing |
+| `tile-gallery.jpg`, `about-hero.jpg` | Group shots under string lights |
+| `event-01.jpg` … `event-12.jpg` | Gallery page |
+| `still-01.jpg` … `still-05.jpg` | Stills on the screening page |
+| `poster-black-swan.jpg` | Black Swan poster |
+| `poster-black-swan-performance.jpg` | Poster crediting Sheja Lau |
+| `ticket-banner.jpg` | Wide ticket artwork |
+| `film-01.jpg` | Archive thumbnail (Black Swan poster) |
 
-### Movies Shown (`movies.html`)
-`film-01.jpg` … `film-11.jpg` — **poster shape, 2:3** (e.g. 800 × 1200)
+**To add more:** drop a file in `assets/images/` and point the relevant
+`<img src>` at it. Slots marked `ratio-poster` or `tile-tall` need PORTRAIT
+images; `ratio-wide` and `ratio-still` need LANDSCAPE. Keep files under
+400 KB.
 
-### Gallery (`gallery.html`)
-`event-01.jpg` … `event-12.jpg` — any shape, mixed looks best
+Every image slot keeps a `.frame-fb` fallback and an `onerror` handler, so a
+missing file shows a styled placeholder instead of a broken image. Keep both
+when editing.
 
-### Screening page
-`poster-african-shorts.jpg` (2:3 poster), `still-01.jpg` … `still-05.jpg`
-
-### Store
-`shop-tee.jpg`, `shop-tote.jpg`, `shop-posters.jpg`, `shop-cap.jpg`, `shop-book.jpg`, `shop-pass.jpg`, `shop-gift.jpg`, `shop-mug.jpg` — 2:3
-
-### About
-`about-hero.jpg` — wide, 2000 × 1125
-
-**Tip:** keep each image under ~400 KB so pages stay fast. Any free tool (Squoosh, TinyJPG) will do it.
-
----
+### Still needing real photographs
+- `shop-*.jpg` — store product shots (8 slots, no real photos yet)
+- `film-02.jpg` … `film-11.jpg` — archive posters for films not yet screened
 
 ## Changing text and content
 
