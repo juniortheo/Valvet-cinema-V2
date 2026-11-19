@@ -1,0 +1,47 @@
+# Velvet Cinema — Netlify configuration
+# Static site: nothing to build, publish the repo root as-is.
+
+[build]
+  publish = "."
+  command = ""
+
+# Clean URLs: /about, /gallery, /sponsor ... serve the matching .html file.
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+[[redirects]]
+  from = "/events"
+  to = "/events.html"
+  status = 200
+[[redirects]]
+  from = "/gallery"
+  to = "/gallery.html"
+  status = 200
+[[redirects]]
+  from = "/sponsor"
+  to = "/sponsor.html"
+  status = 200
+[[redirects]]
+  from = "/contact"
+  to = "/contact.html"
+  status = 200
+[[redirects]]
+  from = "/events/black-swan"
+  to = "/event-black-swan.html"
+  status = 200
+[[redirects]]
+  from = "/events/the-devil-wears-prada-2"
+  to = "/event-the-devil-wears-prada-2.html"
+  status = 200
+
+[[headers]]
+  for = "/assets/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
