@@ -3,7 +3,6 @@
 
 [build]
   publish = "."
-  command = ""
 
 # Clean URLs: /about, /gallery, /sponsor ... serve the matching .html file.
 [[redirects]]
